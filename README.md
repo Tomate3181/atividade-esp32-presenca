@@ -84,10 +84,8 @@ Para rodar a interface web, você precisa de um servidor local simples, pois est
    ```bash
    npm install
    ```
-3. Inicie o servidor de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
+3. Inicie o servidor usando o live server.
+
 4. O servidor iniciará. Acesse no seu navegador o endereço padrão que o servidor expõe (geralmente ele redirecionará direto para `http://localhost:3000/atividade/login.html`).
 
 ### 4. Utilizando o Sistema
