@@ -132,13 +132,40 @@ const topic = 'samuel/iot/temperatura-presenca';
 const clientId = 'web_client_' + Math.random().toString(16).substr(2, 8);
 
 console.log('Conectando ao broker MQTT...');
-const client = mqtt.connect(brokerUrl, { clientId: clientId });
+const client = mqtt.connect(brokerUrl, { 
+    clientId: clientId,
+    reconnectPeriod: 5000,
+    keepalive: 60,
+    clean: true
+});
 
 client.on('connect', () => {
-    console.log('Conectado ao MQTT via WebSockets!');
+    console.log('✅ Conectado ao MQTT via WebSockets!');
+    document.getElementById('mqtt-status').textContent = '● Conectado';
+    document.getElementById('mqtt-status').style.color = '#51cf66';
     client.subscribe(topic, (err) => {
-        if (!err) console.log('Inscrito no tópico: ' + topic);
+        if (!err) {
+            console.log('✅ Inscrito no tópico: ' + topic);
+        } else {
+            console.error('❌ Erro ao inscrever no tópico:', err);
+        }
     });
+});
+
+client.on('error', (err) => {
+    console.error('❌ Erro MQTT:', err);
+});
+
+client.on('offline', () => {
+    console.warn('⚠️ Conexão MQTT offline, tentando reconectar...');
+    document.getElementById('mqtt-status').textContent = '● Reconectando...';
+    document.getElementById('mqtt-status').style.color = '#ffa500';
+    document.getElementById('status-temp').textContent = 'Desconectado do broker';
+    document.getElementById('status-presenca').textContent = 'Desconectado do broker';
+});
+
+client.on('reconnect', () => {
+    console.log('🔄 Reconectando ao MQTT...');
 });
 
 // Animação de pulsar ao receber dados, com um brilho espectral
@@ -151,11 +178,18 @@ function pulseCard(cardId, colorStr) {
 
 // Lida com as mensagens recebidas
 client.on('message', async (t, message) => {
+    console.log('📨 Mensagem recebida no tópico:', t);
     if (t === topic) {
         try {
             const payload = message.toString();
-            console.log('Dados recebidos:', payload);
+            console.log('✅ Payload recebido:', payload);
             const data = JSON.parse(payload);
+            
+            // Validação dos dados
+            if (data.temperatura === undefined || data.presenca === undefined) {
+                console.error('❌ Dados incompletos recebidos:', data);
+                return;
+            }
             
             const temp = parseFloat(data.temperatura);
             const presenca = parseInt(data.presenca); // 1 ocupado, 0 livre
