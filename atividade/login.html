@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sala Inteligente</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div id="particles-container"></div>
+    
+    <main>
+        <div class="auth-container glass-panel">
+            <h2>Acesso ao Sistema</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required placeholder="Seu e-mail cadastrado">
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="Sua senha">
+                </div>
+                <button type="submit" class="btn-primary" id="btn-submit">Entrar</button>
+                <div id="msg" class="message"></div>
+            </form>
+            <div class="auth-links">
+                Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Sistema IoT de Sala Inteligente &copy; <span id="ano"></span> | Aluno: Samuel
+    </footer>
+
+    <script>
+        document.getElementById('ano').textContent = new Date().getFullYear();
+    </script>
+    <script type="module">
+        import { supabase } from './js/supabase-config.js';
+
+        // Check if already logged in
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const msgEl = document.getElementById('msg');
+            const btn = document.getElementById('btn-submit');
+
+            btn.disabled = true;
+            btn.textContent = 'Autenticando...';
+            msgEl.textContent = '';
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: senha,
+            });
+
+            if (error) {
+                msgEl.textContent = `Erro: Login ou senha inválidos.`;
+                msgEl.className = 'message error';
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+            } else {
+                msgEl.textContent = 'Autenticado com sucesso!';
+                msgEl.className = 'message success';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

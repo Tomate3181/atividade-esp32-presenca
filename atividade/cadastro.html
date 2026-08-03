@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Sala Inteligente</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div id="particles-container"></div>
+    
+    <main>
+        <div class="auth-container glass-panel">
+            <h2>Criar Conta</h2>
+            <form id="cadastro-form">
+                <div class="form-group">
+                    <label for="nome">Nome completo</label>
+                    <input type="text" id="nome" required placeholder="João da Silva">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required placeholder="joao@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="Mínimo 6 caracteres">
+                </div>
+                <button type="submit" class="btn-primary" id="btn-submit">Cadastrar</button>
+                <div id="msg" class="message"></div>
+            </form>
+            <div class="auth-links">
+                Já tem uma conta? <a href="login.html">Faça Login</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Sistema IoT de Sala Inteligente &copy; <span id="ano"></span> | Aluno: Samuel
+    </footer>
+
+    <script>
+        document.getElementById('ano').textContent = new Date().getFullYear();
+    </script>
+    <script type="module">
+        import { supabase } from './js/supabase-config.js';
+
+        document.getElementById('cadastro-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const msgEl = document.getElementById('msg');
+            const btn = document.getElementById('btn-submit');
+
+            if (!nome || !email || !senha) {
+                msgEl.textContent = 'Preencha todos os campos obrigatórios.';
+                msgEl.className = 'message error';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Cadastrando...';
+            msgEl.textContent = '';
+
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: senha,
+                options: {
+                    data: { full_name: nome }
+                }
+            });
+
+            if (error) {
+                msgEl.textContent = `Erro: ${error.message}`;
+                msgEl.className = 'message error';
+                btn.disabled = false;
+                btn.textContent = 'Cadastrar';
+            } else {
+                msgEl.textContent = 'Cadastro realizado com sucesso! Redirecionando...';
+                msgEl.className = 'message success';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

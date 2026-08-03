@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento - Sala Inteligente</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- MQTT.js e GSAP -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div id="particles-container"></div>
+    
+    <nav>
+        <h1>SmartRoom IoT</h1>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <button id="btn-logout" class="btn-logout">Sair</button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="dashboard-grid">
+            <!-- Card Temperatura -->
+            <div class="card glass-panel" id="card-temp">
+                <h3>Temperatura</h3>
+                <div class="data-value" id="temp-value">-- °C</div>
+                <div class="status-text" id="status-temp">Aguardando dados...</div>
+            </div>
+
+            <!-- Card Presença -->
+            <div class="card glass-panel" id="card-presenca">
+                <h3>Ocupação da Sala</h3>
+                <div class="data-value" id="presenca-value">--</div>
+                <div class="status-text" id="status-presenca">Aguardando sensor...</div>
+            </div>
+        </div>
+
+        <section class="about-section glass-panel">
+            <h2>Sobre o Sistema</h2>
+            <p>Este painel permite o monitoramento em tempo real do conforto ambiental e da ocupação de uma sala inteligente.</p>
+            <p><strong>Objetivo:</strong> Otimizar a utilização do espaço e garantir um ambiente climatizado adequado para os ocupantes com base nas leituras dos sensores.</p>
+            <p><strong>Tecnologias Utilizadas:</strong></p>
+            <ul>
+                <li>HTML5, CSS3, JavaScript (Frontend)</li>
+                <li>Supabase (Autenticação e Banco de Dados)</li>
+                <li>ESP32 (Microcontrolador C++)</li>
+                <li>Sensores DHT22 (Temperatura) e PIR (Movimento)</li>
+                <li>MQTT (Comunicação via Broker EMQX)</li>
+                <li>GSAP (Animações Dinâmicas)</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        Sistema IoT de Sala Inteligente &copy; <span id="ano"></span> | Aluno: Samuel
+    </footer>
+
+    <script>
+        document.getElementById('ano').textContent = new Date().getFullYear();
+    </script>
+    
+    <!-- Lógica principal da Dashboard -->
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
