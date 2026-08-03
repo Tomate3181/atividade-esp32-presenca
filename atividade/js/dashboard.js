@@ -139,6 +139,11 @@ const client = mqtt.connect(brokerUrl, {
     clean: true
 });
 
+// Limitar listeners para evitar memory leak
+if (client.setMaxListeners) {
+    client.setMaxListeners(20);
+}
+
 client.on('connect', () => {
     console.log('✅ Conectado ao MQTT via WebSockets!');
     document.getElementById('mqtt-status').textContent = '● Conectado';

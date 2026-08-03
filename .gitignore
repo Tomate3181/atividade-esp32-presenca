@@ -1,6 +1,7 @@
 .env
 .env.local
 .env*.local
+config-local.js
 node_modules/
 .DS_Store
 *.log
